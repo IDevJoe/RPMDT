@@ -9,6 +9,13 @@ let msql = require('mysql');
 let broadcastEmitter = new (require('events')).EventEmitter();
 let sig100 = false;
 let st = false;
+let ptimer_start = 300000;
+let ptimer = ptimer_start;
+
+setInterval(function() {
+    if(ptimer <= 0) return;
+    ptimer -= 1000;
+}, 1000);
 
 function verifyRequest(data, requiredParams) {
     let allow = true;
@@ -150,7 +157,7 @@ module.exports = function(ws, req) {
                     break;
                 }
                 ws_session.callsign = data.callsign;
-                if(ws_session.callsign.startsWith("C")) {
+                if(ws_session.callsign.startsWith("C-")) {
                     user_type = "DISPATCH";
                 } else if(ws_session.callsign.startsWith("Civ")) {
                     user_type = "CIV";
@@ -159,7 +166,7 @@ module.exports = function(ws, req) {
                 }
                 getActiveBolos((e1, bolos) => {
                     getActiveCalls((e2, calls) => {
-                        ws.send(JSON.stringify({event: 'info', bolos: bolos, calls: calls, leos: active_leo, session_id: ws_session.id, identified: user_type, sig100: sig100, st: st}));
+                        ws.send(JSON.stringify({event: 'info', bolos: bolos, calls: calls, leos: active_leo, session_id: ws_session.id, identified: user_type, sig100: sig100, st: st, ptimer: ptimer, ptimer_start: ptimer_start}));
                     });
                 });
                 var intv = setInterval(() => {
@@ -229,6 +236,11 @@ module.exports = function(ws, req) {
                 if(user_type !== "DISPATCH") break;
                 if(!verifyRequest(data, ["enable"])) break;
                 sig100 = data.enable;
+                if(data.enable) {
+                    ptimer = -1;
+                } else {
+                    ptimer = ptimer_start;
+                }
                 broadcastEmitter.emit('broadcast', JSON.stringify({event: 'sig100', enable: data.enable, initiator: ws_session.callsign}));
                 break;
             case 'st':

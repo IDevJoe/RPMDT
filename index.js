@@ -207,29 +207,13 @@ app.get('/mdt', (req, res) =>{
     res.render("pages/mdt.pug");
 });
 
+app.get('/civ', (req, res) => {
+    res.render("pages/civ.pug");
+});
+
 let active_leos = [];
 
-app.ws('/ws', require('./websocketConnection')/*function(ws, req) {
-    let ws_session = {};
-
-    console.log("connected");
-
-    ws.on('message', (msg) => {
-        switch(msg.event) {
-            case 'ident':
-                if(msg.callsign == null) ws.close();
-                if(msg.session == null) ws.close();
-                ws_session.callsign = msg.callsign;
-                ws_session.sess_num = msg.session;
-                ss.get(ws_session.sess_num, (err, sess) => {
-                    if(sess == null) ws.close();
-                    ws_session.session = sess;
-                });
-                break;
-        }
-    });
-    ws.send(JSON.stringify({event: 'hello'}));
-}*/);
+app.ws('/ws', require('./websocketConnection'));
 
 app.get('/unsupported', (req, res) => {
     res.render("pages/unsupported.pug");

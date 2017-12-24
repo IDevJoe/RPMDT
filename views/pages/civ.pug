@@ -1,1 +1,17 @@
-extends ../app.pug
+extends ../member.pug
+append head
+    link(rel="stylesheet" href="/static/civ.css")
+    script(src="/static/civ.js")
+append body
+    div.banner
+        div.container
+            div.row
+                div.col-md.tc
+                    | Hello,
+                    span#callsign
+                div.col-md.tc.banner-middle
+                    b RPMDT CIV
+                div.col-md.tc
+                    | Priority Timer:
+                    span#ptimer
+    img.loading-icon(src="/static/load.gif")

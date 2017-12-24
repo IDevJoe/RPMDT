@@ -1,0 +1,17 @@
+.banner {
+    background-color: #f2f2f2;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    text-align: center;
+}
+.banner-middle {
+    border-right: 1px solid #d9d9d9;
+    border-left: 1px solid #d9d9d9;
+}
+.loading-icon {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 56px;
+    height: 56px;
+}
