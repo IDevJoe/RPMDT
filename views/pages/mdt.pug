@@ -1,0 +1,71 @@
+extends ../member.pug
+append head
+    link(rel="stylesheet" href="/static/mdt.css")
+append body
+    div.banner
+        div.container
+            div.row
+                div.col-md.tc
+                    | Current callsign:
+                    span#callsign
+                div.col-md.tc.banner-middle
+                    b RPMDT LEO
+                div.col-md.tc
+                    | Status:
+                    span#status
+            div.row(style="margin-top: 10px;")
+                div.col-md.tc
+                    div.btn-group(role="group" data-toggle="buttons")
+                        label.btn.btn-primary.btn-sm(onclick="std()")
+                            input#std(type="radio" autocomplete="off")
+                            | 10-41
+                        label.btn.btn-primary.btn-sm.active(onclick="etd()")
+                            input#etd(type="radio" autocomplete="off" checked)
+                            | 10-42
+                div.col-md.tc.banner-middle
+                    div.btn-group(role="group" data-toggle="buttons")
+                        label.btn.btn-primary.btn-sm.disabled(onclick="avail()")
+                            input#avail(type="radio" autocomplete="off" disabled)
+                            | 10-8
+                        label.btn.btn-primary.btn-sm.disabled(onclick="busy()")
+                            input#busy(type="radio" autocomplete="off" disabled)
+                            | 10-6
+                        label.btn.btn-primary.btn-sm.disabled(onclick="oos()")
+                            input#oos(type="radio" autocomplete="off" disabled)
+                            | 10-7
+                div.col-md.tc
+                    div.btn-group(role="group" data-toggle="buttons")
+                        label.btn.btn-primary.btn-sm.disabled(onclick="enroute()")
+                            input#enroute(type="radio" autocomplete="off")
+                            | 10-97
+                        label.btn.btn-primary.btn-sm.disabled(onclick="os()")
+                            input#os(type="radio" autocomplete="off")
+                            | 10-23
+                        label.btn.btn-primary.btn-sm.disabled(onclick="tran()")
+                            input#tran(type="radio" autocomplete="off")
+                            | 10-15
+    div.sig100banner(style="display: none;")
+        | Signal 100 in effect
+    div.stb(style="display: none;")
+        | 10-3 in effect
+    div.container#bolos(style="margin-top: 100px;text-align: center;")
+        h2 Active Bolos
+        div#boloList(style="text-align: left")
+    div.container#call_assignment(style="margin-top: 50px;")
+        div(style="text-align: center;")
+            h2 Active Call
+        div.row(style="margin-top: 50px;")
+            div.col-md(style="text-align: center;")
+                h3#callNum
+                span#callOrigin
+                p
+                    span#callTitle
+                    br
+                    span#callLocation
+                p
+                    pre#callDescription
+            div.col-md
+                div.call-log
+    img.loading-icon(src="/static/load.gif")
+append footer
+    script(src="/static/mdt.js")

@@ -1,0 +1,22 @@
+{
+  "name": "rpmdt",
+  "version": "1.0.0",
+  "description": "A web MDT system for Roleplay communities.",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "idevjoe",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-mysql-session": "^1.2.3",
+    "express-session": "^1.15.6",
+    "express-ws": "^3.0.0",
+    "mysql": "^2.15.0",
+    "pug": "^2.0.0-rc.4",
+    "unirest": "^0.5.1"
+  }
+}

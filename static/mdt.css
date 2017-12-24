@@ -1,0 +1,65 @@
+.tc {
+    text-align: center;
+}
+.br {
+    margin-top: 20px;
+}
+.br-50 {
+    margin-top: 50px;
+}
+.banner {
+    background-color: #f2f2f2;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+.banner-middle {
+    border-right: 1px solid #d9d9d9;
+    border-left: 1px solid #d9d9d9;
+}
+.banner .col {
+
+}
+.loading-icon {
+    position: fixed;
+    right: 0;
+    top: 0;
+    width: 56px;
+    height: 56px;
+}
+.sig100banner {
+    text-transform: uppercase;
+    text-align: center;
+    background-color: #ff4d4d;
+    color: white;
+    padding: 5px;
+}
+
+.stb {
+    text-transform: uppercase;
+    text-align: center;
+    background-color: #66ff66;
+    color: black;
+    padding: 5px;
+}
+
+#call_assignment {
+    display: none;
+}
+body {
+    margin-bottom: 50px;
+}
+
+.call-log {
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: .25rem;
+    text-align: center;
+    width: 100%;
+    height: 400px;
+    overflow-x: auto;
+    overflow-y: scroll;
+    text-transform: uppercase;
+}
+
+.call-log-entry {
+    border-bottom: 1px solid rgba(0,0,0,.125);
+}

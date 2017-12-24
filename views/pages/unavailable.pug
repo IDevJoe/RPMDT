@@ -1,0 +1,34 @@
+extends ../member.pug
+append head
+    style
+        | .hidden {
+        | display: none;
+        | }
+        | table {
+        | text-align: center;
+        | }
+        | h1 {
+        | padding-bottom: 20px;
+        | }
+        | button.btn {
+        | width: 300px;
+        | }
+        | div.br {
+        | margin-top: 10px;
+        | }
+append body
+    div.container(style="height: calc(100% - 56px)")
+        table(style="border: 0; height: 100%; width: 100%;")
+            tbody
+                tr
+                    td
+                        div#hello
+                            h1 That isn't right.
+                            | You were disconnected from the system. This is common if you're on mobile.
+                            br
+                            a(href="/") Return home
+
+
+
+append footer
+    script(src="/static/mdtconfig.js")

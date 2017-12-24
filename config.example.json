@@ -1,0 +1,27 @@
+{
+  "web": {
+    "port": 80,
+    "secret": "RandomLettersAndNumbers",
+    "registrationApproval": true,
+    "allowRegistration": true
+  },
+  "authentication": {
+    "name": "Discord.js",
+    "loginURL": "/login",
+    "loginCallback": "/login/process"
+  },
+  "discord": {
+    "client_id": "",
+    "secret": "",
+    "token": "",
+    "mustBeInServer": "",
+    "restrictToServer": true
+  },
+  "mysql": {
+    "host": "localhost",
+    "port": 3306,
+    "user": "rpmdt",
+    "password": "secret",
+    "database": "rpmdt"
+  }
+}

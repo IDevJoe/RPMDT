@@ -1,0 +1,57 @@
+extends ../member.pug
+append head
+    script(src="/static/admin.js")
+    link(rel="stylesheet" href="/static/admin.css")
+append body
+    div.container(style="margin-top: 50px;")
+        div.row
+            div.col-md
+                h2 User Management
+                form(action="javascript:void(0);")
+                    div.form-group
+                        input.form-control#searchUserId(type="text" placeholder="User ID")
+                    div.form-group
+                        button.btn.btn-primary(onclick="searchUser()") Search
+                div#searchResults(style="margin-top: 50px;display: none;")
+                    div.card
+                        div.card-body
+                            h4.card-title Search Result
+                            strong User ID:
+                            span#userid
+                            br
+                            strong Username:
+                            span#username
+                            br
+                            strong Approved:
+                            span#approved
+                            br
+                            strong Administrator:
+                            span#admin
+                            p
+                            div.callsigns
+                                div.callsign
+                                    div.row
+                                        div.col(style="padding-left: 20px;") LOL?
+                                        div.col
+                                            div(style="text-align: right; padding-right: 10px;")
+                                                button.btn.btn-primary.btn-sm Delete
+                            p
+                                div.input-group
+                                    input.form-control#newCallsign(type="text" placeholder="Add callsign")
+                                    div.input-group-btn
+                                        button.btn.btn-primary(onclick="addCallsign()") Add
+                            p
+                            button.btn.btn-success(onclick="approveUser()")#approveButton Approve
+                            button.btn.btn-danger(onclick="unapproveUser()")#unapproveButton Unapprove
+            div.col-md
+    div.modal.fade#notFoundModal(tabindex="-1" role="dialog")
+        div.modal-dialog(role="document")
+            div.modal-content
+                div.modal-header
+                    h5.modal-title User not found
+                    button.close(data-dismiss="modal" aria-label="close")
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    p The user ID you entered returned no results. Please ensure that it is a valid Discord user ID.
+                div.modal-footer
+                    button.btn.btn-primary(type="button" data-dismiss="modal") Okay

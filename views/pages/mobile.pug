@@ -1,0 +1,25 @@
+extends ../app.pug
+append head
+    style
+        | #mainContainer {
+        | display: table;
+        | width: 100%;
+        | height: 100%;
+        | }
+        | #containerContent {
+        | display: table-cell;
+        | vertical-align: middle;
+        | text-align: center;
+        | width: 100%;
+        | height: 100%;
+        | }
+        | #understandButton {
+        | margin-top: 15px;
+        | }
+append body
+    div.container#mainContainer
+        div#containerContent
+            h3 Mobile device detected
+            | The MDT is still usable, however, you may experience random disconnects if you leave the app.
+            div
+                a.btn.btn-primary.btn-sm#understandButton(href="javascript:void(0);" onclick="localStorage.mobilewarning = 1;window.location = '/';") I understand.

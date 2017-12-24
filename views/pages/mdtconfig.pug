@@ -1,0 +1,56 @@
+extends ../member.pug
+append head
+    style
+        | .hidden {
+        | display: none;
+        | }
+        | table {
+        | text-align: center;
+        | }
+        | h2 {
+        | padding-bottom: 20px;
+        | }
+        | button.three {
+        | width: 300px;
+        | }
+        | div.br {
+        | margin-top: 10px;
+        | }
+append body
+    div.container(style="height: calc(100% - 56px)")
+        table(style="border: 0; height: 100%; width: 100%;")
+            tbody
+                tr
+                    td
+                        div#hello
+                            h2 Hello,
+                                = " "+req.session.user.username
+                            button.btn.btn-primary.btn-lg.three#patrol-button(data-toggle="modal" data-target="#setupModal") Patrol
+                            if req.userdata.is_admin == 1
+                                div.br
+                                button.btn.btn-secondary.btn-lg.three(onClick="window.location = '/admin';") Administration
+    div.modal.fade#setupModal(tabindex="-1" role="dialog")
+        div.modal-dialog(role="document")
+            div.modal-content
+                div.modal-header
+                    h5.modal-title Patrol setup
+                    button.close(data-dismiss="modal" aria-label="close")
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    p Let's get setup for patrol. Please select your callsign. If no callsigns are available, please contact an admin, and they will assign you one.
+                div.modal-footer
+                    div.dropdown
+                        button.btn.btn-primary.dropdown-toggle#callsignDropdown(data-toggle="dropdown" aria-haspopup="true" aria-expanded="false") Select Callsign
+                        div.dropdown-menu(aria-labeledby="callsignDropdown")
+                            if req.userdata.callsigns.length == 0
+                                a.dropdown-item(href="#") No callsigns
+                            else
+                                each cs in req.userdata.callsigns
+                                    a.dropdown-item(href="#" onClick!="patrol('"+cs.replace("'", "\\'")+"')")= cs
+                    button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+
+                        
+
+
+append footer
+    script(src="/static/mdtconfig.js")

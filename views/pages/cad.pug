@@ -1,0 +1,178 @@
+extends ../member.pug
+append head
+    link(rel="stylesheet" href="/static/cad.css")
+append body
+    div.banner
+        div.container
+            div.row
+                div.col-md.tc
+                    | Current callsign:
+                    span#callsign
+                div.col-md.tc.banner-middle
+                    b#clock
+                div.col-md.tc
+                    span#active_leos
+                    | Active LEOs
+            div.row(style="margin-top:10px;")
+                div.col-md.tc
+                    button.btn.btn-primary.btn-sm#sig100(data-toggle="button" type="button" onclick="sig100()") Signal 100
+                    button.btn.btn-primary.btn-sm#st(data-toggle="button" type="button" onclick="st()" style="margin-left: 10px;") 10-3
+    div.container
+        div.row
+            div.col-md#active-units
+            div.col-md#otherControls
+                div#callList
+                form(style="margin-top: 50px;" action="javascript:void(0);" onsubmit="createCall()")
+                    div.row
+                        div.col
+                            div.form-group
+                                select.form-control#callOrigin
+                                    option(value="-1" disabled selected) Call origin
+                                    option Unit
+                                    option 911 Call
+                                    option Control
+                        div.col
+                            div.form-group
+                                select.form-control#callType
+                                    option(value="-1" disabled selected) Call type
+                                    option OTHER
+                                    option 10-10
+                                    option 10-11
+                                    option 10-13
+                                    option 10-16
+                                    option 10-17
+                                    option 10-25
+                                    option 10-30
+                                    option 10-49
+                                    option 10-50
+                                    option 10-55
+                                    option 10-56
+                                    option 10-60
+                                    option 10-61
+                                    option 10-62
+                                    option 10-64
+                                    option 10-66
+                                    option 10-67
+                                    option 10-68
+                                    option 10-70
+                                    option 10-80
+                                    option 10-99
+                    div.row
+                        div.col
+                            div.form-group
+                                select.form-control#primaryUnit
+                                    option(value="-1" disabled selected) Primary Officer
+                        div.col
+                            div.form-group
+                                input.form-control#callTitle(type="text" placeholder="Call Title")
+                    div.form-group
+                        input.form-control#callLocation(type="text" placeholder="Location")
+                    div.form-group
+                        textarea.form-control#callDescription(placeholder="Description")
+                    div(style="text-align: right;")
+                        button.btn.btn-primary Create
+                div#boloList
+                form#boloForm(style="margin-top: 50px; margin-bottom: 50px;" action="javascript:void(0);" onsubmit="createBolo()")
+                    div.row
+                        div.col
+                            div.form-group
+                                select#boloType.form-control
+                                    option(value="-1" disabled selected) Bolo Type
+                                    option General Advisory
+                                    option Person Bolo
+                                    option Vehicle Bolo
+                                    option Bolo
+                        div.col
+                            div.form-group
+                                input.form-control#boloLastSeen(type="text" placeholder="Last Seen")
+                    div.form-group
+                        input.form-control#boloReason(type="text" placeholder="Reason")
+                    div.form-group
+                        textarea.form-control#boloDescription(placeholder="Description")
+                    div.form-group(style="text-align: right;")
+                        button.btn.btn-primary Create
+    div.modal.fade#callModal(tabindex="-1" role="dialog")
+        div.modal-dialog(role="document")
+            div.modal-content
+                div.modal-header
+                    h5.modal-title#currentCallNum
+                    button.close(data-dismiss="modal" aria-label="close")
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    div.row
+                        div.col-md
+                            div.form-group
+                                select.form-control#currentCallType
+                                    option(value="-1" disabled selected) Call type
+                                    option OTHER
+                                    option 10-10
+                                    option 10-11
+                                    option 10-13
+                                    option 10-16
+                                    option 10-17
+                                    option 10-25
+                                    option 10-30
+                                    option 10-49
+                                    option 10-50
+                                    option 10-55
+                                    option 10-56
+                                    option 10-60
+                                    option 10-61
+                                    option 10-62
+                                    option 10-64
+                                    option 10-66
+                                    option 10-67
+                                    option 10-68
+                                    option 10-70
+                                    option 10-80
+                                    option 10-99
+                        div.col-md
+                            div.form-group
+                                input#currentCallTitle.form-control(type="text" placeholder="Title")
+                    div.form-group
+                        input#currentCallLocation.form-control(type="text" placeholder="Location")
+                    div.form-group
+                        textarea#currentCallDescription.form-control(placeholder="Description")
+                    div.call-log
+                    div.input-group(style="margin-top: 20px;")
+                        input.form-control#callLogAdd(type="text" placeholder="Add text")
+                        div.input-group-btn
+                            button.btn.btn-secondary(onclick="addCallLogEntry()") Add
+                div.modal-footer
+                    button.btn.btn-primary(type="button" onclick="updateCall();") Update
+                    button.btn.btn-danger(type="button" onclick="archiveCall(this);") Archive
+                    button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+    div.modal.fade#boloModal(tabindex="-1" role="dialog")
+        div.modal-dialog(role="document")
+            div.modal-content
+                div.modal-header
+                    h5.modal-title BOLO
+                    button.close(data-dismiss="modal" aria-label="close")
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    span#currentBoloId(style="display: none;")
+                    div.row
+                        div.col-md
+                            div.form-group
+                                select.form-control#currentBoloType
+                                    option(value="-1" disabled selected) Bolo Type
+                                        option General Advisory
+                                        option Person Bolo
+                                        option Vehicle Bolo
+                                        option Bolo
+                        div.col-md
+                            div.form-group
+                                input#currentBoloLastSeen.form-control(type="text" placeholder="Title")
+                    div.form-group
+                        input#currentBoloReason.form-control(type="text" placeholder="Location")
+                    div.form-group
+                        textarea#currentBoloDescription.form-control(placeholder="Description")
+                div.modal-footer
+                    button.btn.btn-primary(type="button" onclick="updateBolo();") Update
+                    button.btn.btn-danger(type="button" onclick="archiveBolo(this);") Archive
+                    button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+
+
+    img.loading-icon(src="/static/load.gif")
+append footer
+    script(src="/static/cad.js")
