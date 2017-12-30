@@ -9,7 +9,7 @@ let msql = require('mysql');
 let broadcastEmitter = new (require('events')).EventEmitter();
 let sig100 = false;
 let st = false;
-let ptimer_start = 300000;
+let ptimer_start = 600000;
 let ptimer = ptimer_start;
 
 setInterval(function() {
