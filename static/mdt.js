@@ -309,5 +309,13 @@ $(document).ready(function() {
     }
     $("#callsign").html(" "+localStorage.callsign);
     $("#status").html(" "+status1);
+    $("#nameSearch").focus(function() {
+        $(this).parent().addClass("show");
+        $(this).parent().find(".dropdown-menu").addClass("show");
+    });
+    $("#nameSearch").focusout(function() {
+        $(this).parent().removeClass("show");
+        $(this).parent().find(".dropdown-menu").removeClass("show");
+    });
 });
 

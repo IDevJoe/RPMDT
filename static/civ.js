@@ -76,10 +76,10 @@ websocket.onmessage = function(evt) {
             break;
         case 'updateChar':
             var card = findCivCard(data.id);
-            var dob = new Date(data.bday);
-            var month = regularTime(dob.getUTCMonth()+1);
-            var day = regularTime(dob.getUTCDay());
-            var year = dob.getUTCFullYear();
+            var split = data.bday.split('-');
+            var year = split[0];
+            var month = split[1];
+            var day = split[2];
             var lcolor = "green";
             switch(data.lstatus) {
                 case 'Expired':
@@ -140,10 +140,10 @@ function addCiv(id, fname, lname, bday, lstatus, wstatus, wreason) {
             wtext = 'Warrant Issued';
             break;
     }
-    var dob = new Date(bday);
-    var month = regularTime(dob.getUTCMonth()+1);
-    var day = regularTime(dob.getUTCDay());
-    var year = dob.getUTCFullYear();
+    var split = bday.split('-');
+    var year = split[0];
+    var month = split[1];
+    var day = split[2];
     civs[id] = {id: id, fname: fname, lname: lname, bday: bday, lstatus: lstatus, wstatus: wstatus, wreason: wreason};
     $("#characters").html($("#characters").html()+'<div class="card charCard" style="margin-top: 50px;"><div class="card-body"><div class="row"><div class="col"><h4 class="card-title CVN">'+esc(fname+" "+lname)+'</h4></div><div class="col" style="text-align: right;"><button class="btn btn-sm btn-secondary" onclick="displayCharacterModal(this);">View/Edit</button></div></div>License #<span class="CVLN">'+esc(id)+'</span><br>DOB:<span class="CVDB"> '+esc(month+"/"+day+"/"+year)+'</span><p></p><span class="CVLS" style="color: '+lcolor+';">'+esc(lstatus)+' LICENSE</span> |<span class="CVWS" style="color: '+wcolor+';"> '+esc(wtext)+'</span></div></div>');
     $("#regto").html($("#regto").html()+"<option>"+esc(fname+" "+lname+" #"+id)+"</option>")
@@ -162,10 +162,10 @@ function createCharacter() {
 function displayCharacterModal(card) {
     var fcard = $(card).parent().parent().parent().parent();
     var civobj = civs[fcard.find(".CVLN").text()];
-    var dob = new Date(civobj.bday);
-    var month = regularTime(dob.getUTCMonth()+1);
-    var day = regularTime(dob.getUTCDay());
-    var year = dob.getUTCFullYear();
+    var split = civobj.bday.split('-');
+    var year = split[0];
+    var month = split[1];
+    var day = split[2];
     $("#currentCharacterName").text(civobj.fname+" "+civobj.lname);
     $("#currentCharacterId").text(civobj.id);
     $("#currentFname").val(civobj.fname);

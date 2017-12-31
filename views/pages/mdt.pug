@@ -44,6 +44,11 @@ append body
                         label.btn.btn-primary.btn-sm.disabled(onclick="tran()")
                             input#tran(type="radio" autocomplete="off")
                             | 10-15
+            div.row(style="margin-top: 10px;")
+                div.dropdown
+                    input.form-control#nameSearch(placeholder="Name search")
+                    div.dropdown-menu
+                        a.dropdown-item(href='#') Test
     div.sig100banner(style="display: none;")
         | Signal 100 in effect
     div.stb(style="display: none;")
