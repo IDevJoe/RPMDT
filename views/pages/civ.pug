@@ -18,23 +18,7 @@ append body
         div.row
             div.col
                 div#characters
-                    div.card.charCard(style="margin-top: 50px;")
-                        div.card-body
-                            div.row
-                                div.col
-                                    h4.card-title.CVN John Johnson
-                                div.col(style="text-align: right;")
-                                    button.btn.btn-sm.btn-secondary View/Edit
-                            | License #
-                            span.CVLN 39586
-                            br
-                            | DOB:
-                            span.CVDB  01/01/1990
-                            p
-                            span.CVLS(style="color: green;") VALID LICENSE
-                            |  |
-                            span.CVWS(style="color: green;")  NO WARRANTS
-                form(action="javascript:void(0);" onsubmit="createCharacter()" style="margin-top: 50px;")
+                form(action="javascript:void(0);" onsubmit="createCharacter()" style="margin-top: 50px; margin-bottom: 50px;")
                     div.row
                         div.col
                             div.form-group
@@ -59,8 +43,8 @@ append body
                             div.form-group
                                 select.form-control#warrantStatus
                                     option(value="-1" disabled) Warrant Status
-                                    option(selected) No Warrants
-                                    option Warrant Issued
+                                    option(value="0" selected) No Warrants
+                                    option(value="1") Warrant Issued
                         div.col
                             div.form-group
                                 input.form-control#warrantReason(type="text" placeholder="Warrant Reason" disabled)
@@ -85,45 +69,89 @@ append body
                             span.VHIS(style="color: green;") INSURED
                             |  |
                             span.VHRS(style="color: green;")  VALID REGISTRATION
-                form(action="javascript:void(0);" onsubmit="createVehicle()" style="margin-top: 50px;")
+                form(action="javascript:void(0);" onsubmit="createVehicle()" style="margin-top: 50px; margin-bottom: 50px;")
                     div.row
                         div.col
                             div.form-group
-                                input.form-control(type="text" placeholder="License Plate")
+                                input.form-control#lplate(type="text" placeholder="License Plate")
                         div.col
                             div.form-group
-                                input.form-control(type="text" placeholder="VIN")
+                                input.form-control#vin(type="text" placeholder="VIN")
                     div.row
                         div.col
                             div.form-group
-                                input.form-control(type="text" placeholder="Make")
+                                input.form-control#make(type="text" placeholder="Make")
                         div.col
                             div.form-group
-                                input.form-control(type="text" placeholder="Model")
+                                input.form-control#model(type="text" placeholder="Model")
                         div.col
                             div.form-group
-                                input.form-control(type="text" placeholder="Color")
+                                input.form-control#color(type="text" placeholder="Color")
                         div.col
                             div.form-group
-                                input.form-control(type="text" placeholder="Year")
+                                input.form-control#year(type="text" placeholder="Year")
                     div.row
                         div.col
                             div.form-group
-                                select.form-control
+                                select.form-control#regto
                                     option(value="-1" disabled selected) Registered to
                     div.row
                         div.col
                             div.form-group
-                                select.form-control
+                                select.form-control#istate
                                     option(value="-1" disabled) Insurance Status
                                     option(selected) Insured
                                     option Uninsured
                                     option Expired Insurance
                         div.col
                             div.form-group
-                                select.form-control
+                                select.form-control#rstate
                                     option(value="-1" disabled) Registration Status
                                     option(selected) Valid Registration
                                     option Expired Registration
                     button.btn.btn-primary Create Vehicle
+    div.modal.fade#characterModal(tabindex="-1" role="dialog")
+        div.modal-dialog(role="document")
+            div.modal-content
+                div.modal-header
+                    h5.modal-title#currentCharacterName
+                    button.close(data-dismiss="modal" aria-label="close")
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    | License #
+                    span#currentCharacterId
+                    p
+                    div.row
+                        div.col
+                            div.form-group
+                                input.form-control#currentFname(type="text" placeholder="First Name")
+                        div.col
+                            div.form-group
+                                input.form-control#currentLname(type="text" placeholder="Last Name")
+                    div.row
+                        div.col
+                            div.form-group
+                                input.form-control#currentBday(type="date" placeholder="DOB")
+                        div.col
+                            div.form-group
+                                select.form-control#currentLstatus
+                                    option(value="-1" selected disabled) License Status
+                                    option Valid
+                                    option Expired
+                                    option Suspended
+                                    option Revoked
+                    div.row
+                        div.col
+                            div.form-group
+                                select.form-control#currentWstatus
+                                    option(value="-1" disabled) Warrant Status
+                                    option(value="0" selected) No Warrants
+                                    option(value="1") Warrant Issued
+                        div.col
+                            div.form-group
+                                input.form-control#currentWreason(type="text" placeholder="Warrant Reason" disabled)
+                div.modal-footer
+                    button.btn.btn-primary(type="button" onclick="updateCharacter();") Update
+                    button.btn.btn-danger(type="button" onclick="deleteCharacter();") Delete
+                    button.btn.btn-secondary(type="button" data-dismiss="modal") Close
     img.loading-icon(src="/static/load.gif")

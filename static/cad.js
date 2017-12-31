@@ -392,9 +392,9 @@ $(document).ready(function() {
     setInterval(function() {
         var date = new Date();
         $("#clock").text(regularTime(date.getUTCHours())+":"+regularTime(date.getUTCMinutes())+":"+regularTime(date.getUTCSeconds()));
-        $("#callModal").modal({focus: false, show: false});
-        $("#boloModal").modal({focus: false, show: false});
     }, 500);
+    $("#callModal").modal({focus: false, show: false});
+    $("#boloModal").modal({focus: false, show: false});
 });
 
 function regularTime(time) {

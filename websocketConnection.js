@@ -94,6 +94,23 @@ function getActiveCall(id, cb) {
     });
 }
 
+function getIntId(id, cb) {
+    mysql.query("SELECT `id` FROM `users` WHERE `user_id`=?", [id], (errr, ress, ff) => {
+        cb(errr, ress[0].id);
+    });
+}
+
+function getUserCivs(id, cb) {
+    mysql.query("SELECT `id` FROM `users` WHERE `user_id`=?", [id], (errr, ress, ff) => {
+        mysql.query("SELECT `id`, `fname`, `lname`, `dob` AS `bday`, `lstatus`, `hasWarrant` AS `wstatus`, `warrantReason` AS `wreason` FROM `characters` WHERE `user_id`=?", [ress[0].id], (err, res, f) => {
+            if(err) {
+                console.log(err);
+            }
+            cb(err, res);
+        });
+    });
+}
+
 function addToCallLog(id, from, toAdd, cb) {
     mysql.query("INSERT INTO `call_log` (`call_id`, `from`, `info`) VALUES(?, ?, ?)", [id, from, toAdd], (e, r, f) => {
         if(e) {
@@ -166,7 +183,29 @@ module.exports = function(ws, req) {
                 }
                 getActiveBolos((e1, bolos) => {
                     getActiveCalls((e2, calls) => {
-                        ws.send(JSON.stringify({event: 'info', bolos: bolos, calls: calls, leos: active_leo, session_id: ws_session.id, identified: user_type, sig100: sig100, st: st, ptimer: ptimer, ptimer_start: ptimer_start}));
+                        let obj = {event: 'info', session_id: ws_session.id, identified: user_type};
+                        if(user_type == "LEO") {
+                            obj.bolos = bolos;
+                            obj.sig100 = sig100;
+                            obj.st = st;
+                            ws.send(JSON.stringify(obj));
+                        } else if(user_type == "DISPATCH") {
+                            obj.bolos = bolos;
+                            obj.calls = calls;
+                            obj.leos = active_leo;
+                            obj.sig100 = sig100;
+                            obj.st = st;
+                            ws.send(JSON.stringify(obj));
+                        } else if(user_type == "CIV") {
+                            getUserCivs(ws_session.req_session.user.id, (e3, civs) => {
+                                obj.ptimer = ptimer;
+                                obj.sig100 = sig100;
+                                obj.civs = civs;
+                                obj.ptimer_start = ptimer_start;
+                                ws.send(JSON.stringify(obj));
+                            });
+                        }
+                        // Optimizations for initial info packet
                     });
                 });
                 var intv = setInterval(() => {
@@ -379,6 +418,32 @@ module.exports = function(ws, req) {
                 if(user_type !== "DISPATCH") break;
                 if(!verifyRequest(data, ["call", "info"])) break;
                 addToCallLog(data.call, ws_session.callsign, data.info, () => {});
+                break;
+            case 'createChar':
+                if(user_type !== "CIV") break;
+                if(!verifyRequest(data, ["fname", "lname", "bday", "lstatus", "wstatus", "wreason"])) break;
+                getIntId(ws_session.req_session.user.id, (err, id) => {
+                    mysql.query("INSERT INTO `characters` (fname, lname, dob, lstatus, hasWarrant, warrantReason, user_id)\n" +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?)", [data.fname, data.lname, data.bday, data.lstatus, data.wstatus, data.wreason, id], (err, res, f) => {
+                        if(err) {
+                            console.log(err);
+                            return;
+                        }
+                        ws.send(JSON.stringify({event: "createChar", id: res.insertId, fname: data.fname, lname: data.lname, bday: data.bday, lstatus: data.lstatus, wstatus: data.wstatus, wreason: data.wreason}));
+                    });
+                });
+                break;
+            case 'updateChar':
+                if(user_type !== "CIV") break;
+                if(!verifyRequest(data, ["id", "fname", "lname", "bday", "lstatus", "wstatus", "wreason"])) break;
+                mysql.query("UPDATE `characters` SET `fname`=?, `lname`=?, `dob`=?, `lstatus`=?, `hasWarrant`=?, `warrantReason`=? WHERE `id`=?", [data.fname, data.lname, data.bday, data.lstatus, data.wstatus, data.wreason, data.id], (err, res, f) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    ws.send(JSON.stringify({event: "updateChar", id: data.id, fname: data.fname, lname: data.lname, bday: data.bday, lstatus: data.lstatus, wstatus: data.wstatus, wreason: data.wreason}));
+                });
+                break;
         }
     });
 
