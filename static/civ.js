@@ -174,7 +174,7 @@ function displayCharacterModal(card) {
     $("#currentLstatus").val(civobj.lstatus);
     $("#currentWstatus").val(civobj.wstatus);
     $("#currentWreason").val(civobj.wreason);
-    $("#currentWreason").prop("disabled", !civobj.wstatus);
+    $("#currentWreason").prop("disabled", !($("#currentWstatus").val() === '1'));
     $("#characterModal").modal('show');
 }
 
