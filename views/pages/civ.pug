@@ -51,24 +51,6 @@ append body
                     button.btn.btn-primary Create Character
             div.col
                 div#vehicles
-                    div.card.vehicleCard(style="margin-top: 50px;")
-                        div.card-body
-                            div.row
-                                div.col
-                                    h4.card-title.VHLP 829KQJ
-                                div.col(style="text-align: right;")
-                                    button.btn.btn-sm.btn-secondary View/Edit
-                            | Registration #
-                            span.VHRN 19486
-                            br
-                            span.VHT Matte Black 2016 Dodge Charger
-                            br
-                            | Registered to
-                            span.VHRT  John Johnson
-                            p
-                            span.VHIS(style="color: green;") INSURED
-                            |  |
-                            span.VHRS(style="color: green;")  VALID REGISTRATION
                 form(action="javascript:void(0);" onsubmit="createVehicle()" style="margin-top: 50px; margin-bottom: 50px;")
                     div.row
                         div.col
@@ -153,5 +135,59 @@ append body
                 div.modal-footer
                     button.btn.btn-primary(type="button" onclick="updateCharacter();") Update
                     button.btn.btn-danger(type="button" onclick="deleteCharacter();") Delete
+                    button.btn.btn-secondary(type="button" data-dismiss="modal") Close
+    div.modal.fade#vehicleModal(tabindex="-1" role="dialog")
+        div.modal-dialog(role="document")
+            div.modal-content
+                div.modal-header
+                    h5.modal-title#currentVehiclePlate
+                    button.close(data-dismiss="modal" aria-label="close")
+                        span(aria-hidden="true") &times;
+                div.modal-body
+                    | Registration #
+                    span#currentVehicleId
+                    p
+                    div.row
+                        div.col
+                            div.form-group
+                                input.form-control#currentLplate(type="text" placeholder="License Plate")
+                        div.col
+                            div.form-group
+                                input.form-control#currentVin(type="text" placeholder="VIN")
+                    div.row
+                        div.col
+                            div.form-group
+                                input.form-control#currentMake(type="text" placeholder="Make")
+                        div.col
+                            div.form-group
+                                input.form-control#currentModel(type="text" placeholder="Model")
+                        div.col
+                            div.form-group
+                                input.form-control#currentColor(type="text" placeholder="Color")
+                        div.col
+                            div.form-group
+                                input.form-control#currentYear(type="text" placeholder="Year")
+                    div.row
+                        div.col
+                            div.form-group
+                                select.form-control#currentRegto
+                                    option(value="-1" disabled selected) Registered to
+                    div.row
+                        div.col
+                            div.form-group
+                                select.form-control#currentIstate
+                                    option(value="-1" disabled) Insurance Status
+                                    option(selected) Insured
+                                    option Uninsured
+                                    option Expired Insurance
+                        div.col
+                            div.form-group
+                                select.form-control#currentRstate
+                                    option(value="-1" disabled) Registration Status
+                                    option(selected) Valid Registration
+                                    option Expired Registration
+                div.modal-footer
+                    button.btn.btn-primary(type="button" onclick="updateVehicle();") Update
+                    button.btn.btn-danger(type="button" onclick="deleteVehicle();") Delete
                     button.btn.btn-secondary(type="button" data-dismiss="modal") Close
     img.loading-icon(src="/static/load.gif")

@@ -111,6 +111,17 @@ function getUserCivs(id, cb) {
     });
 }
 
+function getUserVehicles(_id, cb) {
+    getIntId(_id, (err, id) => {
+        mysql.query("SELECT * FROM `vehicles` WHERE `userid`=?", [id], (err, res, f) => {
+            if(err) {
+                console.log(err);
+            }
+            cb(err, res);
+        })
+    });
+}
+
 function addToCallLog(id, from, toAdd, cb) {
     mysql.query("INSERT INTO `call_log` (`call_id`, `from`, `info`) VALUES(?, ?, ?)", [id, from, toAdd], (e, r, f) => {
         if(e) {
@@ -198,11 +209,14 @@ module.exports = function(ws, req) {
                             ws.send(JSON.stringify(obj));
                         } else if(user_type == "CIV") {
                             getUserCivs(ws_session.req_session.user.id, (e3, civs) => {
-                                obj.ptimer = ptimer;
-                                obj.sig100 = sig100;
-                                obj.civs = civs;
-                                obj.ptimer_start = ptimer_start;
-                                ws.send(JSON.stringify(obj));
+                                getUserVehicles(ws_session.req_session.user.id, (e4, vehs) => {
+                                    obj.ptimer = ptimer;
+                                    obj.sig100 = sig100;
+                                    obj.civs = civs;
+                                    obj.vehs = vehs;
+                                    obj.ptimer_start = ptimer_start;
+                                    ws.send(JSON.stringify(obj));
+                                });
                             });
                         }
                         // Optimizations for initial info packet
@@ -442,6 +456,28 @@ module.exports = function(ws, req) {
                         return;
                     }
                     ws.send(JSON.stringify({event: "updateChar", id: data.id, fname: data.fname, lname: data.lname, bday: data.bday, lstatus: data.lstatus, wstatus: data.wstatus, wreason: data.wreason}));
+                });
+                break;
+            case 'deleteChar':
+                if(user_type !== "CIV") break;
+                if(!verifyRequest(data, ["id"])) break;
+                mysql.query("DELETE FROM `characters` WHERE `id`=?", data.id, (err, res, f) => {
+                    if(err) console.log(err);
+                    ws.send(JSON.stringify({event: "deleteChar", id: data.id}));
+                });
+                break;
+            case 'createVehicle':
+                if(user_type !== "CIV") break;
+                if(!verifyRequest(data, ["plate", "vin", "make", "model", "color", "year", "regto", "lstate", "rstate"])) break;
+                getIntId(ws_session.req_session.user.id, (err, id) => {
+                    mysql.query("INSERT INTO `vehicles` (plate, vin, make, model, color, year, regto, lstate, rstate, userid)\n" +
+                        "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [data.plate, data.vin, data.make, data.model, data.color, data.year, data.regto, data.lstate, data.rstate, id], (err, res, f) => {
+                        if(err) {
+                            console.log(err);
+                            return;
+                        }
+                        ws.send(JSON.stringify({event: "createVehicle", id: res.insertId, plate: data.plate, vin: data.vin, make: data.make, model: data.model, color: data.color, year: data.year, regto: data.regto, lstate: data.lstate, rstate: data.rstate}));
+                    });
                 });
                 break;
         }

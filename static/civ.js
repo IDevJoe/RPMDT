@@ -63,6 +63,9 @@ websocket.onmessage = function(evt) {
             data.civs.forEach(function(e) {
                 addCiv(e.id, e.fname, e.lname, e.bday, e.lstatus, e.wstatus, e.wreason);
             });
+            data.vehs.forEach(function(e) {
+                addVehicle(e.id, e.plate, e.vin, e.make, e.model, e.color, e.year, e.regto, e.lstate, e.rstate);
+            });
             break;
         case 'sig100':
             if(data.enable) {
@@ -107,6 +110,14 @@ websocket.onmessage = function(evt) {
             card.find(".CVWS").text(" "+wtext);
             civs[data.id] = data;
             break;
+        case 'deleteChar':
+            var card = findCivCard(data.id);
+            card.remove();
+            delete civs[data.id];
+            break;
+        case 'createVehicle':
+            addVehicle(data.id, data.plate, data.vin, data.make, data.model, data.color, data.year, data.regto, data.lstate, data.rstate);
+            break;
     }
 };
 
@@ -149,6 +160,26 @@ function addCiv(id, fname, lname, bday, lstatus, wstatus, wreason) {
     $("#regto").html($("#regto").html()+"<option>"+esc(fname+" "+lname+" #"+id)+"</option>")
 }
 
+function addVehicle(id, plate, vin, make, model, color, year, regto, lstate, rstate) {
+    var _rt = civs[regto].fname+" "+civs[regto].lname;
+    var icolor = "green";
+    var rcolor = "green";
+    switch(lstate) {
+        case 'Uninsured':
+            icolor = 'red';
+            break;
+        case 'Expired Insurance':
+            icolor = 'orange';
+            break;
+    }
+    switch(rstate) {
+        case 'Expired Registration':
+            rcolor = "orange";
+            break;
+    }
+    $("#vehicles").html($("#vehicles").html()+'<div class="card vehicleCard" style="margin-top: 50px;"><div class="card-body"><div class="row"><div class="col"><h4 class="card-title VHLP">'+esc(plate)+'</h4></div><div class="col" style="text-align: right;"><button class="btn btn-sm btn-secondary">View/Edit</button></div></div>Registration #<span class="VHRN">'+esc(id)+'</span><br><span class="VHT">'+esc(color)+' '+esc(year)+' '+esc(make)+' '+esc(model)+'</span><br>Registered to<span class="VHRT"> '+esc(_rt)+'</span><p></p><span class="VHIS" style="color: '+icolor+';">'+esc(lstate)+'</span> |<span class="VHRS" style="color: '+rcolor+';"> '+esc(rstate)+'</span></div></div>');
+}
+
 function createCharacter() {
     var fname = $("#fname").val();
     var lname = $("#lname").val();
@@ -157,6 +188,12 @@ function createCharacter() {
     var wstatus = $("#warrantStatus").val();
     var wreason = $("#warrantReason").val();
     websocket.send(JSON.stringify({event: "createChar", fname: fname, lname: lname, bday: bday, lstatus: lstatus, wstatus: wstatus, wreason: wreason}));
+    $("#fname").val("");
+    $("#lname").val("");
+    $("#bday").val("");
+    $("#licenseStatus").val("-1");
+    $("#warrantStatus").val("-1");
+    $("#warrantReason").val("");
 }
 
 function displayCharacterModal(card) {
@@ -190,8 +227,34 @@ function updateCharacter() {
     $("#characterModal").modal('hide');
 }
 
-function createVehicle() {
+function deleteCharacter() {
+    var id = $("#currentCharacterId").text();
+    swal({
+        title: "Delete your character?",
+        text: "The character will not be able to be recovered.",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete'
+    }).then((result) => {
+        if(result.value) {
+            websocket.send(JSON.stringify({event: "deleteChar", id: id}));
+            $("#characterModal").modal('hide');
+        }
+    });
+}
 
+function createVehicle() {
+    var plate = $("#lplate").val();
+    var vin = $("#vin").val();
+    var make = $("#make").val();
+    var model = $("#model").val();
+    var color = $("#color").val();
+    var year = $("#year").val();
+    var regto = $("#regto").val().split(' ');
+    regto = regto[regto.length - 1].substr(1);
+    var lstate = $("#istate").val();
+    var rstate = $("#rstate").val();
+    websocket.send(JSON.stringify({event: "createVehicle", plate: plate, vin: vin, make: make, model: model, color: color, year: year, regto: regto, lstate: lstate, rstate, rstate}));
 }
 
 websocket.onclose = function() {
