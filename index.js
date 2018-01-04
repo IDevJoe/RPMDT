@@ -110,6 +110,43 @@ connection.query("SHOW TABLES LIKE 'call_log'", (error, results, fields) => {
     });
 });
 
+connection.query("SHOW TABLES LIKE 'characters'", (error, results, fields) => {
+    if(results.length !== 0) return;
+    connection.query("CREATE TABLE `characters` (\n" +
+        "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+        "  `fname` varchar(45) NOT NULL,\n" +
+        "  `lname` varchar(45) NOT NULL,\n" +
+        "  `dob` varchar(45) NOT NULL,\n" +
+        "  `lstatus` varchar(45) NOT NULL,\n" +
+        "  `hasWarrant` int(11) NOT NULL DEFAULT '0',\n" +
+        "  `warrantReason` varchar(100) NOT NULL,\n" +
+        "  `user_id` int(11) NOT NULL,\n" +
+        "  PRIMARY KEY (`id`)\n" +
+        ") ENGINE=InnoDB AUTO_INCREMENT=210733 DEFAULT CHARSET=utf8;\n", (err, res, f) => {
+        if (err) console.log(err);
+    });
+});
+
+connection.query("SHOW TABLES LIKE 'vehicles'", (error, results, fields) => {
+    if(results.length !== 0) return;
+    connection.query("CREATE TABLE `vehicles` (\n" +
+        "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+        "  `plate` varchar(45) NOT NULL,\n" +
+        "  `vin` varchar(45) NOT NULL,\n" +
+        "  `make` varchar(45) NOT NULL,\n" +
+        "  `model` varchar(45) NOT NULL,\n" +
+        "  `color` varchar(45) NOT NULL,\n" +
+        "  `year` int(11) NOT NULL,\n" +
+        "  `regto` int(11) NOT NULL,\n" +
+        "  `lstate` varchar(45) NOT NULL,\n" +
+        "  `rstate` varchar(45) NOT NULL,\n" +
+        "  `userid` int(11) NOT NULL,\n" +
+        "  PRIMARY KEY (`id`)\n" +
+        ") ENGINE=InnoDB AUTO_INCREMENT=654128 DEFAULT CHARSET=utf8;\n", (err, res, f) => {
+        if (err) console.log(err);
+    });
+});
+
 connection.query("TRUNCATE `calls_attached`");
 
 app.use(session({
