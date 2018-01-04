@@ -42,8 +42,8 @@ append body
                         div.col
                             div.form-group
                                 select.form-control#warrantStatus
-                                    option(value="-1" disabled) Warrant Status
-                                    option(value="0" selected) No Warrants
+                                    option(value="-1" disabled selected) Warrant Status
+                                    option(value="0") No Warrants
                                     option(value="1") Warrant Issued
                         div.col
                             div.form-group
@@ -51,7 +51,7 @@ append body
                     button.btn.btn-primary Create Character
             div.col
                 div#vehicles
-                form(action="javascript:void(0);" onsubmit="createVehicle()" style="margin-top: 50px; margin-bottom: 50px;")
+                form#vehForm(action="javascript:void(0);" onsubmit="createVehicle()" style="margin-top: 50px; margin-bottom: 50px;")
                     div.row
                         div.col
                             div.form-group
@@ -81,15 +81,15 @@ append body
                         div.col
                             div.form-group
                                 select.form-control#istate
-                                    option(value="-1" disabled) Insurance Status
-                                    option(selected) Insured
+                                    option(value="-1" disabled selected) Insurance Status
+                                    option Insured
                                     option Uninsured
                                     option Expired Insurance
                         div.col
                             div.form-group
                                 select.form-control#rstate
-                                    option(value="-1" disabled) Registration Status
-                                    option(selected) Valid Registration
+                                    option(value="-1" disabled selected) Registration Status
+                                    option Valid Registration
                                     option Expired Registration
                     button.btn.btn-primary Create Vehicle
     div.modal.fade#characterModal(tabindex="-1" role="dialog")

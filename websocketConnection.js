@@ -480,6 +480,28 @@ module.exports = function(ws, req) {
                     });
                 });
                 break;
+            case 'updateVehicle':
+                if(user_type !== "CIV") break;
+                if(!verifyRequest(data, ["id", "plate", "vin", "make", "model", "color", "year", "regto", "lstate", "rstate"])) break;
+                mysql.query("UPDATE `vehicles` SET plate=?, vin=?, make=?, model=?, color=?, year=?, regto=?, lstate=?, rstate=? WHERE id=?", [data.plate, data.vin, data.make, data.model, data.color, data.year, data.regto, data.lstate, data.rstate, data.id], (err, res, f) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    ws.send(JSON.stringify({event: "updateVehicle", id: data.id, plate: data.plate, vin: data.vin, make: data.make, model: data.model, color: data.color, year: data.year, regto: data.regto, lstate: data.lstate, rstate: data.rstate}));
+                });
+                break;
+            case 'deleteVehicle':
+                if(user_type !== "CIV") break;
+                if(!verifyRequest(data, ["id"])) break;
+                mysql.query("DELETE FROM `vehicles` WHERE `id`=?", [data.id], (err, res, f) => {
+                    if(err) {
+                        console.log(err);
+                        return;
+                    }
+                    ws.send(JSON.stringify({event: "deleteVehicle", id: data.id}));
+                });
+                break;
         }
     });
 

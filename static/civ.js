@@ -36,6 +36,7 @@ function esc(text) {
 var ptimer = -1;
 var ptimer_start = -1;
 var civs = {};
+var vehs = {};
 websocket.onmessage = function(evt) {
     var data = JSON.parse(evt.data);
     switch(data.event) {
@@ -113,10 +114,53 @@ websocket.onmessage = function(evt) {
         case 'deleteChar':
             var card = findCivCard(data.id);
             card.remove();
+            $("#regto option").each(function(e) {
+                var split = $(this).text().split(' ');
+                split = split[split.length - 1].substr(1);
+                if(data.id == split) $(this).remove();
+            });
+            $("#currentRegto option").each(function(e) {
+                var split = $(this).text().split(' ');
+                split = split[split.length - 1].substr(1);
+                if(data.id == split) $(this).remove();
+            });
             delete civs[data.id];
             break;
         case 'createVehicle':
             addVehicle(data.id, data.plate, data.vin, data.make, data.model, data.color, data.year, data.regto, data.lstate, data.rstate);
+            break;
+        case 'updateVehicle':
+            var cd = findVehCard(data.id);
+            vehs[data.id] = data;
+            var regto = civs[data.regto];
+            regto = regto.fname+" "+regto.lname;
+            cd.find(".VHT").text(data.color+" "+data.year+" "+data.make+" "+data.model);
+            cd.find(".VHRT").text(" "+regto);
+            cd.find(".VHLP").text(data.plate);
+            var icolor = "green";
+            var rcolor = "green";
+            switch(data.lstate) {
+                case 'Uninsured':
+                    icolor = 'red';
+                    break;
+                case 'Expired Insurance':
+                    icolor = 'orange';
+                    break;
+            }
+            switch(data.rstate) {
+                case 'Expired Registration':
+                    rcolor = "orange";
+                    break;
+            }
+            cd.find(".VHIS").css('color', icolor);
+            cd.find(".VHRS").css('color', rcolor);
+            cd.find(".VHIS").text(data.lstate);
+            cd.find(".VHRS").text(" "+data.rstate);
+            break;
+        case 'deleteVehicle':
+            var crd = findVehCard(data.id);
+            crd.remove();
+            delete vehs[data.id];
             break;
     }
 };
@@ -125,6 +169,16 @@ function findCivCard(id) {
     var result = null;
     $(".charCard").each(function(e) {
         if($(this).find(".CVLN").text() == id) {
+            result = $(this);
+        }
+    });
+    return result;
+}
+
+function findVehCard(id) {
+    var result = null;
+    $(".vehicleCard").each(function(e) {
+        if($(this).find(".VHRN").text() == id) {
             result = $(this);
         }
     });
@@ -157,13 +211,15 @@ function addCiv(id, fname, lname, bday, lstatus, wstatus, wreason) {
     var day = split[2];
     civs[id] = {id: id, fname: fname, lname: lname, bday: bday, lstatus: lstatus, wstatus: wstatus, wreason: wreason};
     $("#characters").html($("#characters").html()+'<div class="card charCard" style="margin-top: 50px;"><div class="card-body"><div class="row"><div class="col"><h4 class="card-title CVN">'+esc(fname+" "+lname)+'</h4></div><div class="col" style="text-align: right;"><button class="btn btn-sm btn-secondary" onclick="displayCharacterModal(this);">View/Edit</button></div></div>License #<span class="CVLN">'+esc(id)+'</span><br>DOB:<span class="CVDB"> '+esc(month+"/"+day+"/"+year)+'</span><p></p><span class="CVLS" style="color: '+lcolor+';">'+esc(lstatus)+' LICENSE</span> |<span class="CVWS" style="color: '+wcolor+';"> '+esc(wtext)+'</span></div></div>');
-    $("#regto").html($("#regto").html()+"<option>"+esc(fname+" "+lname+" #"+id)+"</option>")
+    $("#regto").html($("#regto").html()+"<option>"+esc(fname+" "+lname+" #"+id)+"</option>");
+    $("#currentRegto").html($("#currentRegto").html()+"<option>"+esc(fname+" "+lname+" #"+id)+"</option>");
 }
 
 function addVehicle(id, plate, vin, make, model, color, year, regto, lstate, rstate) {
     var _rt = civs[regto].fname+" "+civs[regto].lname;
     var icolor = "green";
     var rcolor = "green";
+    vehs[id] = {id: id, plate: plate, vin: vin, make: make, model: model, color: color, year: year, regto: regto, lstate: lstate, rstate: rstate};
     switch(lstate) {
         case 'Uninsured':
             icolor = 'red';
@@ -177,7 +233,7 @@ function addVehicle(id, plate, vin, make, model, color, year, regto, lstate, rst
             rcolor = "orange";
             break;
     }
-    $("#vehicles").html($("#vehicles").html()+'<div class="card vehicleCard" style="margin-top: 50px;"><div class="card-body"><div class="row"><div class="col"><h4 class="card-title VHLP">'+esc(plate)+'</h4></div><div class="col" style="text-align: right;"><button class="btn btn-sm btn-secondary">View/Edit</button></div></div>Registration #<span class="VHRN">'+esc(id)+'</span><br><span class="VHT">'+esc(color)+' '+esc(year)+' '+esc(make)+' '+esc(model)+'</span><br>Registered to<span class="VHRT"> '+esc(_rt)+'</span><p></p><span class="VHIS" style="color: '+icolor+';">'+esc(lstate)+'</span> |<span class="VHRS" style="color: '+rcolor+';"> '+esc(rstate)+'</span></div></div>');
+    $("#vehicles").html($("#vehicles").html()+'<div class="card vehicleCard" style="margin-top: 50px;"><div class="card-body"><div class="row"><div class="col"><h4 class="card-title VHLP">'+esc(plate)+'</h4></div><div class="col" style="text-align: right;"><button class="btn btn-sm btn-secondary" onclick="displayVehicleModal(this)">View/Edit</button></div></div>Registration #<span class="VHRN">'+esc(id)+'</span><br><span class="VHT">'+esc(color)+' '+esc(year)+' '+esc(make)+' '+esc(model)+'</span><br>Registered to<span class="VHRT"> '+esc(_rt)+'</span><p></p><span class="VHIS" style="color: '+icolor+';">'+esc(lstate)+'</span> |<span class="VHRS" style="color: '+rcolor+';"> '+esc(rstate)+'</span></div></div>');
 }
 
 function createCharacter() {
@@ -215,6 +271,26 @@ function displayCharacterModal(card) {
     $("#characterModal").modal('show');
 }
 
+function displayVehicleModal(card) {
+    var fcard = $(card).parent().parent().parent().parent();
+    var id = fcard.find('.VHRN').text();
+    var veh = vehs[id];
+    $("#currentVehiclePlate").text(veh.plate);
+    $("#currentVehicleId").text(veh.id);
+    $("#currentLplate").val(veh.plate);
+    $("#currentVin").val(veh.vin);
+    $("#currentMake").val(veh.make);
+    $("#currentModel").val(veh.model);
+    $("#currentColor").val(veh.color);
+    $("#currentYear").val(veh.year);
+    var regto = civs[veh.regto];
+    regto = regto.fname+" "+regto.lname+" #"+regto.id;
+    $("#currentRegto").val(regto);
+    $("#currentIstate").val(veh.lstate);
+    $("#currentRstate").val(veh.rstate);
+    $("#vehicleModal").modal('show');
+}
+
 function updateCharacter() {
     var id = $("#currentCharacterId").text();
     var fname = $("#currentFname").val();
@@ -227,11 +303,27 @@ function updateCharacter() {
     $("#characterModal").modal('hide');
 }
 
+function updateVehicle() {
+    var id = $("#currentVehicleId").text();
+    var plate = $("#currentLplate").val();
+    var vin = $("#currentVin").val();
+    var make = $("#currentMake").val();
+    var model = $("#currentModel").val();
+    var color = $("#currentColor").val();
+    var year = $("#currentYear").val();
+    var regto = $("#currentRegto").val().split(' ');
+    regto = regto[regto.length - 1].substr(1);
+    var lstate = $("#currentIstate").val();
+    var rstate = $("#currentRstate").val();
+    websocket.send(JSON.stringify({event: "updateVehicle", id: id, plate: plate, vin: vin, make: make, model: model, color: color, year: year, regto: regto, lstate: lstate, rstate: rstate}));
+    $("#vehicleModal").modal('hide');
+}
+
 function deleteCharacter() {
     var id = $("#currentCharacterId").text();
     swal({
         title: "Delete your character?",
-        text: "The character will not be able to be recovered.",
+        text: "All vehicles associated with this character will also be deleted. Are you sure you want to do this?",
         type: 'warning',
         showCancelButton: true,
         confirmButtonText: 'Delete'
@@ -239,6 +331,22 @@ function deleteCharacter() {
         if(result.value) {
             websocket.send(JSON.stringify({event: "deleteChar", id: id}));
             $("#characterModal").modal('hide');
+        }
+    });
+}
+
+function deleteVehicle() {
+    var id = $("#currentVehicleId").text();
+    swal({
+        title: "Delete vehicle?",
+        text: "This action cannot be reversed. Are you sure you want to do this?",
+        type: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Delete'
+    }).then((result) => {
+        if(result.value) {
+            websocket.send(JSON.stringify({event: 'deleteVehicle', id: id}));
+            $("#vehicleModal").modal('hide');
         }
     });
 }
@@ -254,6 +362,15 @@ function createVehicle() {
     regto = regto[regto.length - 1].substr(1);
     var lstate = $("#istate").val();
     var rstate = $("#rstate").val();
+    $("#lplate").val('');
+    $("#vin").val('');
+    $("#make").val('');
+    $("#model").val('');
+    $("#color").val('');
+    $("#year").val('');
+    $("#regto").val('-1');
+    $("#lstate").val('-1');
+    $("#rstate").val('-1');
     websocket.send(JSON.stringify({event: "createVehicle", plate: plate, vin: vin, make: make, model: model, color: color, year: year, regto: regto, lstate: lstate, rstate, rstate}));
 }
 
